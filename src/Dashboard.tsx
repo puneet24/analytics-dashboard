@@ -4,7 +4,7 @@ import { ReadingType } from './models/ReadingType'
 
 function Dashboard() {
 
-    const [display, setDisplay] = React.useState(eventService.getMessage());
+    const [display, setDisplay] = React.useState<any>(null);
 
     React.useEffect(() => {
         eventService.getMessage().subscribe((obj: any) => {
@@ -12,16 +12,16 @@ function Dashboard() {
         });
         temperatureSubject.subscribe(
             (data: any) => {
-            eventService.sendMessage({type: ReadingType.temperature, value: data })
-        });
+                eventService.sendMessage({ type: ReadingType.temperature, value: data })
+            });
         airPressureSubject.subscribe(
             (data: any) => {
-            eventService.sendMessage({type: ReadingType.airPressure, value: data })
-        })
+                eventService.sendMessage({ type: ReadingType.airPressure, value: data })
+            })
         humiditySubject.subscribe(
             (data: any) => {
-            eventService.sendMessage({type: ReadingType.humidity, value: data })
-        });
+                eventService.sendMessage({ type: ReadingType.humidity, value: data })
+            });
         fakeSystemUpdate();
     }, []);
 
@@ -29,19 +29,19 @@ function Dashboard() {
 
     return (
         <div>
-            <div className="row well">
+            {display && <div className="row well">
                 <div className="col-md-3"></div>
                 <div className="col-md-2">
-                    <span><b>Temperature:</b> { display.temperature ? display.temperature : 'NA' }</span>
+                    <span><b>Temperature:</b> {display.temperature ? display.temperature : 'NA'}</span>
                 </div>
                 <div className="col-md-2">
-                    <span><b>Air Pressure:</b> { display.airPressure ? display.airPressure : 'NA' }</span>
+                    <span><b>Air Pressure:</b> {display.airPressure ? display.airPressure : 'NA'}</span>
                 </div>
                 <div className="col-md-2">
-                    <span><b>Humidity:</b> { display.humidity ? display.humidity : 'NA' }</span>
+                    <span><b>Humidity:</b> {display.humidity ? display.humidity : 'NA'}</span>
                 </div>
                 <div className="col-md-3"></div>
-            </div>
+            </div>}
         </div>
     );
 }

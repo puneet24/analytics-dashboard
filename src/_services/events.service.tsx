@@ -8,21 +8,30 @@ export const humiditySubject = new Subject();
 
 let workerId: any;
 let events = [];
+// time in milli seconds
+let displayobjectThresholdTime = 100;
 
 let emitter: any;
 const observable = Observable.create((e: any) => emitter = e);
 
 let readingObject = new Reading();
 
-const startWorker = () => {
-    workerId = setInterval(() => {
-        if (events.length > 0) {
+const process = () => {
+    if (events.length > 0) {
+        if(readingObject.canSendEventToDashboard())
             emitter.next(readingObject.get());
-            events = [];
-            clearInterval(workerId);
-            workerId = null;
-        }
-    }, 1000);
+        events = [];
+        clearInterval(workerId);
+        workerId = null;
+    }
+}
+
+// It makes sure that displayobject will not be send before 100
+const startWorker = () => {
+    process();
+    workerId = setInterval(() => {
+        process();
+    }, displayobjectThresholdTime);
 }
 
 const eventObserver = () => {
@@ -30,7 +39,6 @@ const eventObserver = () => {
         events.push(true);
     }
     else {
-        emitter.next(readingObject.get());
         startWorker();
     }
 }
@@ -58,5 +66,5 @@ export const fakeSystemUpdate = () => {
                 humiditySubject.next(parseFloat((Math.random()*100).toFixed(2)))
                 break;
         }
-    }, 900);
+    }, 1000);
 }

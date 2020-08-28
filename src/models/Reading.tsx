@@ -2,11 +2,12 @@ import { ReadingType, SingleReading } from './ReadingType'
 
 export class Reading {
     temperature: Number | null = null;
-    lastUpdatedTemperature: any = new Date();
+    lastUpdatedTemperature: any = null;
     airPressure: Number | null = null;
-    lastUpdatedAirPressure: any = new Date();
+    lastUpdatedAirPressure: any = null;
     humidity: Number | null = null;
-    lastUpdatedHumidity: any = new Date();
+    lastUpdatedHumidity: any = null;
+    // will automatically update value to NA if system update time is passed.
     systemUpdateTime: Number = 1000;
     constructor() {
 
@@ -14,13 +15,13 @@ export class Reading {
 
     get() {
         let currDate: any = new Date();
-        if((currDate - this.lastUpdatedTemperature) > this.systemUpdateTime) {
+        if(this.lastUpdatedTemperature && (currDate - this.lastUpdatedTemperature) > this.systemUpdateTime) {
             this.temperature = null;
         }
-        if((currDate - this.lastUpdatedAirPressure) > this.systemUpdateTime) {
+        if(this.lastUpdatedAirPressure && (currDate - this.lastUpdatedAirPressure) > this.systemUpdateTime) {
             this.airPressure = null;
         }
-        if((currDate - this.lastUpdatedHumidity) > this.systemUpdateTime) {
+        if(this.lastUpdatedHumidity && (currDate - this.lastUpdatedHumidity) > this.systemUpdateTime) {
             this.humidity = null;
         }
         return {
@@ -45,5 +46,9 @@ export class Reading {
                 this.lastUpdatedHumidity = new Date();
                 break;
         }
+    }
+
+    canSendEventToDashboard() {
+        return this.lastUpdatedTemperature && this.lastUpdatedAirPressure && this.lastUpdatedHumidity;
     }
 }
