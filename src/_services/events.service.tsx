@@ -66,5 +66,5 @@ export const fakeSystemUpdate = () => {
                 humiditySubject.next(parseFloat((Math.random()*100).toFixed(2)))
                 break;
         }
-    }, 1000);
+    }, 900);
 }
